@@ -69,6 +69,13 @@ const OrdersPage: React.FC = () => {
           }
         );
         const data = await response.json();
+
+        // Sort orders by createdAt date in descending order
+        data.sort(
+          (a: Order, b: Order) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
         setOrders(data);
       } catch (error) {
         console.error("Error fetching order data:", error);
