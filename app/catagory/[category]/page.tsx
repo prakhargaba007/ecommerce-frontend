@@ -15,6 +15,7 @@ interface ProductData {
   name: string;
   description: string;
   price: number;
+  images: string[]; // Added images property
   [key: string]: any; // Add any other fields as needed
 }
 
@@ -30,10 +31,9 @@ export default function A({ params }: Params) {
     async function fetchData() {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/product/category/${category}?${new URLSearchParams(
-              paramsObjectAlt
-            )}` // Adjusted URL structure
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/category/${category}?${new URLSearchParams(
+            paramsObjectAlt
+          )}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -48,7 +48,6 @@ export default function A({ params }: Params) {
 
     fetchData();
   }, [category, paramsString]); // Use the stringified version as a dependency
-  console.log(data.length);
 
   return (
     <>
