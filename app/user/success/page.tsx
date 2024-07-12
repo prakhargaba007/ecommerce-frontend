@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button, Text, Title, Notification } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
@@ -73,7 +73,7 @@ const SuccessPage: React.FC = () => {
     };
 
     fetchOrder();
-  }, []);
+  }, [orderId]);
 
   if (!order) {
     return <Text>Loading...</Text>;
@@ -137,4 +137,10 @@ const SuccessPage: React.FC = () => {
   );
 };
 
-export default SuccessPage;
+const WrappedSuccessPage: React.FC = () => (
+  <Suspense fallback={<Text>Loading...</Text>}>
+    <SuccessPage />
+  </Suspense>
+);
+
+export default WrappedSuccessPage;

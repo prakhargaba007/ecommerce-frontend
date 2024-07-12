@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import {
   Button,
   Container,
@@ -36,9 +36,7 @@ const AddressForm: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const paramsObjectAlt = Object.fromEntries(searchParams.entries());
-  const paramsString = JSON.stringify(paramsObjectAlt); // Stringify the query parameters
-  // console.log(paramsObjectAlt);
-  // console.log("1", paramsString);
+  const paramsString = JSON.stringify(paramsObjectAlt);
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -172,4 +170,10 @@ const AddressForm: React.FC = () => {
   );
 };
 
-export default AddressForm;
+const WrappedAddressForm: React.FC = () => (
+  <Suspense fallback={<Loader />}>
+    <AddressForm />
+  </Suspense>
+);
+
+export default WrappedAddressForm;

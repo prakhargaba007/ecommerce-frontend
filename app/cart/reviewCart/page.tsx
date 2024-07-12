@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Button, Text, Title, Notification } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import toast, { Toaster } from "react-hot-toast";
@@ -48,7 +48,7 @@ type NotificationState = {
   color: "red" | "green";
 };
 
-const ConfirmationPage: React.FC = () => {
+const ConfirmationPageContent: React.FC = () => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
   const [notification, setNotification] = useState<NotificationState | null>(
@@ -268,6 +268,14 @@ const ConfirmationPage: React.FC = () => {
         Pay and Place Order
       </Button>
     </div>
+  );
+};
+
+const ConfirmationPage: React.FC = () => {
+  return (
+    <Suspense fallback={<Text>Loading...</Text>}>
+      <ConfirmationPageContent />
+    </Suspense>
   );
 };
 
