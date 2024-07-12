@@ -31,7 +31,7 @@ export default function A({ params }: Params) {
     async function fetchData() {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/category/${category}?${new URLSearchParams(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/porduct/category/${category}?${new URLSearchParams(
             paramsObjectAlt
           )}`
         );

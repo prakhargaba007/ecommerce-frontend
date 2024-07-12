@@ -32,7 +32,7 @@ export default function Page({ params }: Params) {
     async function fetchData() {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL + `/product/${params.prodId}`
+          process.env.NEXT_PUBLIC_BACKEND_URL + `/porduct/${params.prodId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
