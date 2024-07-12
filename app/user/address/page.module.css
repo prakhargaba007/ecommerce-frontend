@@ -1,0 +1,23 @@
+.ordersContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto; /* Center horizontally */
+}
+
+.addButton {
+  align-self: flex-start; /* Align button to the left */
+}
+
+@media (max-width: 768px) {
+  .ordersContainer {
+    padding: 10px; /* Reduce padding for mobile view */
+  }
+
+  .addButton {
+    width: 100%; /* Full width for mobile view */
+    margin-bottom: 20px; /* Add space below the button */
+  }
+}

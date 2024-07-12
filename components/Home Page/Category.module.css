@@ -1,0 +1,29 @@
+.imageCircle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* .slideBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+} */
+
+.categoryName {
+  text-align: center;
+  margin-top: 8px; /* Adjust as needed */
+}
+
+.title {
+  margin: 15px 0 15px 15px;
+}
+.carousel{
+  padding-left: 15px;
+}

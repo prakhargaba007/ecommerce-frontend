@@ -1,0 +1,63 @@
+.cartContainer {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.cartItems {
+  margin-bottom: 20px;
+}
+
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.productName {
+  flex: 2;
+}
+
+.productPrice,
+.quantityInput,
+.itemTotalPrice {
+  flex: 1;
+  text-align: center;
+}
+
+.pinCodeInput {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.totalPrice {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.placeOrderButton {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.placeOrderButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}

@@ -1,0 +1,31 @@
+.formContainer {
+  max-width: 600px; /* Limit the form width for better readability */
+  margin: 0 auto; /* Center the form horizontally */
+  padding: 20px;
+  background-color: #f8f9fa; /* Light background color for the form */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.formContainer h3 {
+  text-align: center; /* Center the title */
+  margin-bottom: 20px; /* Space below the title */
+}
+
+.mantine-TextInput-input {
+  margin-bottom: 15px; /* Space between form fields */
+}
+
+.mantine-Button-root {
+  width: 100%; /* Full-width button for consistency */
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 15px; /* Less padding on mobile */
+  }
+
+  .mantine-Button-root {
+    margin-top: 10px; /* Space above the button */
+  }
+}
