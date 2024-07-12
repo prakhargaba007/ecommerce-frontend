@@ -51,20 +51,25 @@ type Order = {
   updatedAt: string;
 };
 
-const OrderDetailPage: React.FC = ({ params }) => {
+type NotificationType = {
+  message: string;
+  color: "red" | "green";
+};
+
+type Params = {
+  params: {
+    orderID: string;
+  };
+};
+
+const OrderDetailPage: React.FC<Params> = ({ params }) => {
   const [order, setOrder] = useState<Order | null>(null);
-  const [notification, setNotification] = useState<{
-    message: string;
-    color: "red" | "green";
-  } | null>(null);
-  // const router = useRouter();
-  // const { orderId } = router.query;
-  console.log(params.orderID);
+  const [notification, setNotification] = useState<NotificationType | null>(
+    null
+  );
 
   const orderId = params.orderID.split("-")[0];
   const productId = params.orderID.split("-")[1];
-  console.log(1, orderId);
-  console.log(2, productId);
 
   useEffect(() => {
     if (orderId) {
@@ -78,7 +83,7 @@ const OrderDetailPage: React.FC = ({ params }) => {
               },
             }
           );
-          const data = await response.json();
+          const data: Order = await response.json();
           setOrder(data);
         } catch (error) {
           console.error("Error fetching order data:", error);
@@ -165,7 +170,6 @@ const OrderDetailPage: React.FC = ({ params }) => {
             href={`/user/orders/${orderId}-${item.product._id}`}
           >
             <div className={classes.productListItem}>
-              {/* <a className={classes.productLink} */}
               <img
                 src={item.product.images[0]}
                 alt={item.product.name}

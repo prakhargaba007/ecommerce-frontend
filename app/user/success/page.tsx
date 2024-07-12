@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Lin, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button, Text, Title, Notification } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import classes from "./page.module.css";

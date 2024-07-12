@@ -48,8 +48,11 @@ const CartItem: React.FC<CartItemProps> = ({
   onQuantityChange,
   onDelete,
 }) => {
-  const handleQuantityChange = (value: number) => {
-    onQuantityChange(product._id, value);
+  const handleQuantityChange = (value: string | number) => {
+    const numberValue = typeof value === "string" ? parseInt(value, 10) : value;
+    if (!isNaN(numberValue)) {
+      onQuantityChange(product._id, numberValue);
+    }
   };
 
   return (
@@ -221,7 +224,6 @@ const Cart: React.FC = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      // router.push(`/cart/reviewCart`);
       router.push(`/cart/reviewCart?address=${selectedAddress}`);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -265,7 +267,7 @@ const Cart: React.FC = () => {
         className={classes.addressSelect}
         placeholder="Select address"
         value={selectedAddress}
-        onChange={setSelectedAddress}
+        onChange={(value) => setSelectedAddress(value || "")}
         data={addresses.map((address) => ({
           value: address._id,
           label: `${address.street}, ${address.city}, ${address.state}, ${address.country} - ${address.postalCode}`,

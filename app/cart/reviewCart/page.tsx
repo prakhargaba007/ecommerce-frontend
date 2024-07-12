@@ -6,6 +6,12 @@ import toast, { Toaster } from "react-hot-toast";
 import classes from "./page.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 
+declare global {
+  interface Window {
+    Razorpay: any; // Define the type of Razorpay object if possible
+  }
+}
+
 type Product = {
   _id: string;
   name: string;
@@ -27,15 +33,27 @@ type Address = {
   isDefault: boolean;
 };
 
+type CartItem = {
+  product: Product;
+  quantity: number;
+};
+
+type Cart = {
+  products: CartItem[];
+  totalPrice: number;
+};
+
+type NotificationState = {
+  message: string;
+  color: "red" | "green";
+};
+
 const ConfirmationPage: React.FC = () => {
-  const [cart, setCart] = useState<{
-    products: { product: Product; quantity: number }[];
-  } | null>(null);
+  const [cart, setCart] = useState<Cart | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
-  const [notification, setNotification] = useState<{
-    message: string;
-    color: "red" | "green";
-  } | null>(null);
+  const [notification, setNotification] = useState<NotificationState | null>(
+    null
+  );
 
   const searchParams = useSearchParams();
   const addressId = searchParams.get("address");
@@ -53,11 +71,7 @@ const ConfirmationPage: React.FC = () => {
             },
           }
         );
-        console.log(response);
-
         const data = await response.json();
-        // console.log(data);
-
         setCart(data);
       } catch (error) {
         console.error("Error fetching cart data:", error);
@@ -102,6 +116,8 @@ const ConfirmationPage: React.FC = () => {
   }, [addressId]);
 
   const handlePlaceOrder = async () => {
+    if (!cart) return;
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/order`,
@@ -118,14 +134,13 @@ const ConfirmationPage: React.FC = () => {
       );
 
       const data = await res.json();
-      console.log(data);
       await handlePaymentVerify(data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlePaymentVerify = async (data) => {
+  const handlePaymentVerify = async (data: any) => {
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: data.amount,
@@ -133,8 +148,7 @@ const ConfirmationPage: React.FC = () => {
       name: "Devknus",
       description: "Test Mode",
       order_id: data.id,
-      handler: async (response) => {
-        console.log("response", response);
+      handler: async (response: any) => {
         try {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/verify`,
@@ -172,9 +186,8 @@ const ConfirmationPage: React.FC = () => {
     rzp1.open();
   };
 
-  const confirmOrder = async (paymentId) => {
-    console.log(paymentId);
-    console.log(address._id);
+  const confirmOrder = async (paymentId: string) => {
+    if (!address) return;
 
     try {
       const response = await fetch(
@@ -191,10 +204,8 @@ const ConfirmationPage: React.FC = () => {
           }),
         }
       );
-      console.log(response);
 
       const data = await response.json();
-      console.log(data);
 
       if (response.status === 201) {
         toast.success("Order confirmed successfully");
@@ -241,7 +252,7 @@ const ConfirmationPage: React.FC = () => {
         ))}
       </div>
       <div className={classes.totalPrice}>
-        <Text>Total Price: ₹{totalPrice.toFixed(2)}</Text>
+        <Text>Total Price: ₹{totalPrice?.toFixed(2)}</Text>
       </div>
       <div className={classes.addressDetails}>
         <Title order={4}>Shipping Address</Title>

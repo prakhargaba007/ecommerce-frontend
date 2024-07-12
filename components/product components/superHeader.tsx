@@ -14,9 +14,13 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { IconCarSuv, IconGardenCart, IconStar } from "@tabler/icons-react";
-// import { useRouter } from "next/router";
 
-function AddtoCartHandler(productId, quantity) {
+type AddToCartProps = {
+  productId: string;
+  quantity: string;
+} & ButtonProps;
+
+function AddtoCartHandler(productId: string, quantity: string) {
   fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/cart", {
     method: "POST",
     headers: {
@@ -31,16 +35,14 @@ function AddtoCartHandler(productId, quantity) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Success:", data);
-      // router.push("/"); // Replace with your desired path
     })
     .catch((error) => {
       console.error("Error:", error);
     });
 }
 
-export function AddToCart(props) {
+export function AddToCart(props: AddToCartProps) {
   const { productId, quantity, ...rest } = props;
-  // const router = useRouter();
 
   return (
     <Button
@@ -54,7 +56,23 @@ export function AddToCart(props) {
   );
 }
 
-export default function SuperHeader({ data }) {
+type ProductData = {
+  _id: string;
+  name: string;
+  price: number;
+  brand: string;
+  color: string;
+  fabric: string;
+  gender: string;
+  stock: number;
+  images: string[];
+};
+
+type SuperHeaderProps = {
+  data: ProductData;
+};
+
+export default function SuperHeader({ data }: SuperHeaderProps) {
   console.log("a", data);
 
   const maxQuantity = data.stock < 10 ? data.stock : 10;
@@ -62,7 +80,7 @@ export default function SuperHeader({ data }) {
     (i + 1).toString()
   );
 
-  const [quantity, setQuantity] = useState("1");
+  const [quantity, setQuantity] = useState<string>("1");
 
   const slides = data?.images?.map((image, index) => (
     <Carousel.Slide className={classes.slide} key={index}>
@@ -99,7 +117,7 @@ export default function SuperHeader({ data }) {
           <div className={classes.details3}>
             <Select
               value={quantity}
-              onChange={setQuantity}
+              onChange={(value) => setQuantity(value!)}
               data={quantityOptions.map((q) => ({ value: q, label: q }))}
               placeholder="Quantity"
               className={classes.quantitySelect}

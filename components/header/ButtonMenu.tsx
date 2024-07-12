@@ -1,18 +1,19 @@
 import { Button, Menu, Text, rem, useMantineTheme } from "@mantine/core";
 import {
-  IconSquareCheck,
   IconPackage,
-  IconUsers,
-  IconCalendar,
-  IconChevronDown,
   IconUserCircle,
   IconLogout,
   IconHome,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
-export function ButtonMenu({ logOut }) {
+type ButtonMenuProps = {
+  logOut: () => void;
+};
+
+export function ButtonMenu({ logOut }: ButtonMenuProps) {
   const theme = useMantineTheme();
+
   return (
     <Menu
       transitionProps={{ transition: "pop-top-right" }}
@@ -24,8 +25,9 @@ export function ButtonMenu({ logOut }) {
         <Button>P</Button>
       </Menu.Target>
       <Menu.Dropdown>
-        <Link href={`/user/orders`}>
+        <Link href="/user/orders" passHref>
           <Menu.Item
+            component="a"
             leftSection={
               <IconPackage
                 style={{ width: rem(16), height: rem(16) }}
@@ -37,8 +39,9 @@ export function ButtonMenu({ logOut }) {
             Orders
           </Menu.Item>
         </Link>
-        <Link href={`/user/profile`}>
+        <Link href="/user/profile" passHref>
           <Menu.Item
+            component="a"
             leftSection={
               <IconUserCircle
                 style={{ width: rem(16), height: rem(16) }}
@@ -50,8 +53,9 @@ export function ButtonMenu({ logOut }) {
             Profile
           </Menu.Item>
         </Link>
-        <Link href={`/user/address`}>
+        <Link href="/user/address" passHref>
           <Menu.Item
+            component="a"
             leftSection={
               <IconHome
                 style={{ width: rem(16), height: rem(16) }}
