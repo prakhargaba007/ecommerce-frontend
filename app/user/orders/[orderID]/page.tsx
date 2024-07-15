@@ -21,12 +21,14 @@ type Product = {
   size: string;
   brand: string;
   images: string[];
+  review?: string;
 };
 
 type OrderProduct = {
   product: Product;
   quantity: number;
   price: number;
+  review?: any;
 };
 
 type Address = {
