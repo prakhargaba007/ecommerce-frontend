@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { CardsCarousel } from "@/components/Home Page/CardsCarousel";
 import Category from "@/components/Home Page/Category";
+import { Loader } from "@mantine/core";
+import "./page.css";
 
 // Define the type for a single category item
 interface CategoryItem {
@@ -68,6 +70,7 @@ export default function Home() {
 
   return (
     <>
+      {/* <Loader className="loader"  /> */}
       <CardsCarousel />
       <Category title="Men" data={menCategories} gender="male" />
       <Category title="Women" data={womenCategories} gender="female" />

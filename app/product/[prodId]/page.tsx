@@ -1,7 +1,9 @@
 "use client";
 import { FaqSimple } from "@/components/product components/FaqSimple";
+import ReviewsSection from "../../../components/product components/ReviewsSection";
 import SuperHeader from "@/components/product components/superHeader";
 import { useEffect, useState } from "react";
+import { Loader } from "@mantine/core";
 
 type Params = {
   params: {
@@ -54,6 +56,7 @@ export default function Page({ params }: Params) {
     <>
       <SuperHeader data={data} />
       <FaqSimple />
+      <ReviewsSection product={data} />
     </>
   );
 }

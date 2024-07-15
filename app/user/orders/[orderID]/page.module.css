@@ -46,6 +46,7 @@
 }
 
 .shippingInfo,
+.ratingInfo,
 .statusInfo {
   padding: 20px;
   background-color: #fff;
@@ -100,4 +101,8 @@
 .productQuantity {
   font-size: 14px;
   color: #333;
+}
+
+.loader {
+  margin: 300px auto;
 }
