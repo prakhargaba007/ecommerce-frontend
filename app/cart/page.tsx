@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import {
   Button,
-  Input,
   Text,
   Title,
   NumberInput,
@@ -13,7 +12,16 @@ import {
 import { IconTrash, IconCheck, IconX } from "@tabler/icons-react";
 import classes from "./page.module.css";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // Import Link from next/link
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchCart,
+  updateQuantity,
+  removeProduct,
+  selectCartProducts,
+} from "@/redux/slices/cartSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+import useFetch from "@/hooks/useFetch";
 
 type Product = {
   _id: string;
@@ -81,12 +89,17 @@ const CartItem: React.FC<CartItemProps> = ({
 
 const Cart: React.FC = () => {
   const router = useRouter();
-  const [cart, setCart] = useState<{
-    products: { product: Product; quantity: number }[];
-  } | null>(null);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const cartProducts = useSelector(selectCartProducts);
+  console.log(cartProducts);
+
+  const cartLoading = useSelector(
+    (state: RootState | any) => state.cart.loading
+  );
+  const cartError = useSelector((state: RootState | any) => state.cart.error);
+
+  const [addresses, setAddresses] = useState<Address[] | null>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
-  console.log("2", selectedAddress);
 
   const [notification, setNotification] = useState<{
     message: string;
@@ -94,30 +107,22 @@ const Cart: React.FC = () => {
   } | null>(null);
 
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/cart",
-          {
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          }
-        );
-        const data = await response.json();
-        setCart(data);
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-        setNotification({
-          message: "Error fetching cart data",
-          color: "red",
-        });
-        setTimeout(() => {
-          setNotification(null);
-        }, 1500);
-      }
-    };
+    dispatch(fetchCart());
+  }, [dispatch]);
 
+  const { data, loading, error, get } = useFetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + "/address"
+  );
+  console.log(1, data);
+
+  // useEffect(() => {
+  //   const fetchAddresses = async () => {
+  //     await get();
+  //     setAddresses(data);
+  //   };
+  //   fetchAddresses();
+  // }, []);
+  useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const response = await fetch(
@@ -152,74 +157,52 @@ const Cart: React.FC = () => {
     fetchAddresses();
   }, []);
 
-  const handleQuantityChange = async (productId: string, quantity: number) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            productId: productId,
-            quantity: quantity,
-          }),
-        }
-      );
-      const data = await response.json();
-      setCart(data.cart);
-      setNotification({
-        message: "Cart updated successfully",
-        color: "green",
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    dispatch(updateQuantity({ productId, quantity }))
+      .unwrap()
+      .then(() => {
+        setNotification({
+          message: "Cart updated successfully",
+          color: "green",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 1500);
+      })
+      .catch((error) => {
+        console.error("Error updating cart quantity:", error);
+        setNotification({
+          message: "Error updating cart quantity",
+          color: "red",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 1500);
       });
-      setTimeout(() => {
-        setNotification(null);
-      }, 1500);
-    } catch (error) {
-      console.error("Error updating cart quantity:", error);
-      setNotification({
-        message: "Error updating cart quantity",
-        color: "red",
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 1500);
-    }
   };
 
-  const handleDelete = async (productId: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart/${productId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-      const data = await response.json();
-      setCart(data.cart);
-      setNotification({
-        message: "Product removed from cart",
-        color: "green",
+  const handleDelete = (productId: string) => {
+    dispatch(removeProduct(productId))
+      .unwrap()
+      .then(() => {
+        setNotification({
+          message: "Product removed from cart",
+          color: "green",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 1500);
+      })
+      .catch((error) => {
+        console.error("Error deleting cart item:", error);
+        setNotification({
+          message: "Error deleting cart item",
+          color: "red",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 1500);
       });
-      setTimeout(() => {
-        setNotification(null);
-      }, 1500);
-    } catch (error) {
-      console.error("Error deleting cart item:", error);
-      setNotification({
-        message: "Error deleting cart item",
-        color: "red",
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 1500);
-    }
   };
 
   const handlePlaceOrder = async () => {
@@ -230,14 +213,20 @@ const Cart: React.FC = () => {
     }
   };
 
-  if (!cart) {
+  if (cartLoading) {
     return <Text>Loading...</Text>;
   }
 
-  const totalPrice = cart.products?.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0
-  );
+  if (cartError) {
+    return <Text>Error: {cartError}</Text>;
+  }
+
+  const totalPrice = Array.isArray(cartProducts?.products)
+    ? cartProducts?.products.reduce(
+        (acc: any, item: any) => acc + item.product.price * item.quantity,
+        0
+      )
+    : 0;
 
   return (
     <div className={classes.cartContainer}>
@@ -253,26 +242,32 @@ const Cart: React.FC = () => {
         </Notification>
       )}
       <div className={classes.cartItems}>
-        {cart.products?.map((item) => (
-          <CartItem
-            key={item.product._id}
-            product={item.product}
-            quantity={item.quantity}
-            onQuantityChange={handleQuantityChange}
-            onDelete={handleDelete}
-          />
-        ))}
+        {Array.isArray(cartProducts?.products) &&
+          cartProducts?.products.map((item: any) => (
+            <CartItem
+              key={item.product._id}
+              product={item.product}
+              quantity={item.quantity}
+              onQuantityChange={handleQuantityChange}
+              onDelete={handleDelete}
+            />
+          ))}
       </div>
-      <Select
-        className={classes.addressSelect}
-        placeholder="Select address"
-        value={selectedAddress}
-        onChange={(value) => setSelectedAddress(value || "")}
-        data={addresses.map((address) => ({
-          value: address._id,
-          label: `${address.street}, ${address.city}, ${address.state}, ${address.country} - ${address.postalCode}`,
-        }))}
-      />
+      {loading ? (
+        "Loading Address"
+      ) : (
+        <Select
+          className={classes.addressSelect}
+          placeholder="Select address"
+          value={selectedAddress}
+          onChange={(value) => setSelectedAddress(value || "")}
+          data={addresses?.map((address) => ({
+            value: address._id,
+            label: `${address.name}, ${address.street}, ${address.city}, ${address.state}, ${address.country} - ${address.postalCode}`,
+          }))}
+        />
+      )}
+
       <Link href="/user/address/addAddress">
         <Button variant="outline" className={classes.addAddressButton}>
           Add New Address
@@ -284,7 +279,7 @@ const Cart: React.FC = () => {
       <Button
         className={classes.placeOrderButton}
         onClick={handlePlaceOrder}
-        disabled={!selectedAddress || cart.products.length === 0}
+        disabled={!selectedAddress || cartProducts?.products.length === 0}
       >
         Proceed to checkout
       </Button>

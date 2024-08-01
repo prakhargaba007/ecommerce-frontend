@@ -1,10 +1,8 @@
+// app/layout.tsx
 import "@mantine/core/styles.css";
 import type { Metadata } from "next";
-import { Notifications } from "@mantine/notifications";
-
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
-import Script from "next/script";
+import { ColorSchemeScript } from "@mantine/core";
+import { ClientProviders } from "../components/ClientProviders";
 
 export const metadata: Metadata = {
   title: "Notes App",
@@ -23,15 +21,7 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
-          <Notifications position="bottom-right" />
-          <HeaderMegaMenu />
-          {children}
-          <Script
-            src="https://checkout.razorpay.com/v1/checkout.js"
-            strategy="lazyOnload"
-          />
-        </MantineProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

@@ -8,45 +8,38 @@ import {
   Group,
   Image,
   Text,
-  Title,
   rem,
   Select,
 } from "@mantine/core";
 import { useState } from "react";
 import { IconCarSuv, IconGardenCart, IconStar } from "@tabler/icons-react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/redux/slices/cartSlice";
+import { AppDispatch } from "@/redux/store";
 
 type AddToCartProps = {
   productId: string;
   quantity: string;
 } & ButtonProps;
 
-function AddtoCartHandler(productId: string, quantity: string) {
-  fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/cart", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-    body: JSON.stringify({
-      productId: productId,
-      quantity: quantity,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
-
 export function AddToCart(props: AddToCartProps) {
   const { productId, quantity, ...rest } = props;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ productId, quantity }))
+      .unwrap()
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <Button
-      onClick={() => AddtoCartHandler(productId, quantity)}
+      onClick={handleAddToCart}
       leftSection={<IconGardenCart />}
       variant="default"
       {...rest}

@@ -1,63 +1,169 @@
 .cartContainer {
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
   max-width: 800px;
-  margin: auto;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cartItems {
-  margin-bottom: 20px;
+  margin-top: 1.5rem;
 }
 
 .cartItem {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.cartItem:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .productName {
-  flex: 2;
+  font-weight: 600;
+  color: #333;
 }
 
-.productPrice,
-.quantityInput,
+.productPrice {
+  font-weight: 500;
+  color: #666;
+}
+
+.quantityInput {
+  width: 80px;
+}
+
 .itemTotalPrice {
-  flex: 1;
-  text-align: center;
+  font-weight: 600;
+  color: #007bff;
 }
 
-.pinCodeInput {
+/* .deleteIcon {
+  transition: all 0.2s ease;
+}
+
+.deleteIcon:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+} */
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.deleteIcon {
+  transition: all 0.2s ease;
+}
+
+.deleteIcon:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.deleteIcon:active {
+  animation: shake 0.3s ease-in-out;
+}
+
+.addressSelect {
+  margin-top: 2rem;
   width: 100%;
-  margin-bottom: 20px;
+}
+
+.addAddressButton {
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .totalPrice {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-bottom: 20px;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: right;
+  /* color: #28a745; */
 }
 
 .placeOrderButton {
+  margin-top: 1rem;
   width: 100%;
-  padding: 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background-color: #228be6;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.placeOrderButton:hover:not(:disabled) {
+  background-color: #0b7adb;
+  transform: translateY(-2px);
 }
 
 .placeOrderButton:disabled {
-  background: #ccc;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .notification {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .cartItem {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .productName {
+    grid-column: 1 / -1;
+  }
+
+  .quantityInput {
+    grid-column: 1 / 2;
+  }
+
+  .itemTotalPrice {
+    grid-column: 2 / 3;
+    text-align: right;
+  }
+
+  .deleteIcon {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 0.5rem;
+  }
 }

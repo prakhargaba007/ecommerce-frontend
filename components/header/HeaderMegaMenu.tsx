@@ -1,4 +1,8 @@
-"use client";
+import { AppDispatch } from "../../redux/store";
+import { fetchProfile, selectProfile } from "@/redux/slices/profileReducer";
+import { fetchCart } from "../../redux/slices/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   HoverCard,
   Group,
@@ -19,8 +23,6 @@ import {
   useMantineTheme,
   Autocomplete,
 } from "@mantine/core";
-import { MantineLogo } from "@mantinex/mantine-logo";
-import { useDisclosure } from "@mantine/hooks";
 import {
   IconNotification,
   IconCode,
@@ -34,8 +36,9 @@ import {
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { ButtonMenu } from "./ButtonMenu";
+import { MantineLogo } from "@mantinex/mantine-logo";
+import { useDisclosure } from "@mantine/hooks";
 
 const mockdata = [
   {
@@ -71,6 +74,15 @@ const mockdata = [
 ];
 
 export function HeaderMegaMenu() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { products } = useSelector((state: any) => state.cart);
+  const profile = useSelector(selectProfile);
+
+  useEffect(() => {
+    dispatch(fetchProfile());
+    dispatch(fetchCart());
+  }, [dispatch]);
+
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
@@ -112,11 +124,7 @@ export function HeaderMegaMenu() {
 
   const renderAuthButtons = () => {
     if (isLoggedIn) {
-      return (
-        // <Button onClick={handleLogout}>
-        <ButtonMenu logOut={handleLogout} />
-        // </Button>
-      );
+      return <ButtonMenu logOut={handleLogout} name={profile?.name} />;
     } else {
       return (
         <>
@@ -138,7 +146,6 @@ export function HeaderMegaMenu() {
           <Link href={`/`}>
             <MantineLogo size={30} />
           </Link>
-
           <Group h="100%" gap={0} visibleFrom="sm">
             <Autocomplete
               className={classes.search}
@@ -162,7 +169,6 @@ export function HeaderMegaMenu() {
               visibleFrom="xs"
             />
           </Group>
-
           <Group visibleFrom="sm">
             <Group h="100%" gap={0} visibleFrom="sm">
               <Link href="/" className={classes.link}>
@@ -188,7 +194,6 @@ export function HeaderMegaMenu() {
                     </Center>
                   </a>
                 </HoverCard.Target>
-
                 <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                   <Group justify="space-between" px="md">
                     <Text fw={500}>Features</Text>
@@ -196,13 +201,10 @@ export function HeaderMegaMenu() {
                       View all
                     </Anchor>
                   </Group>
-
                   <Divider my="sm" />
-
                   <SimpleGrid cols={2} spacing={0}>
                     {links}
                   </SimpleGrid>
-
                   <div className={classes.dropdownFooter}>
                     <Group justify="space-between">
                       <div>
@@ -225,25 +227,27 @@ export function HeaderMegaMenu() {
                 Academy
               </a>
             </Group>
-            <Group>{renderAuthButtons()}</Group>
-            <Link href="/cart">
-              <div className={classes.cart}>
-                <span className={classes.cartQuantity}>1</span>
-                <span>
-                  <IconShoppingCart stroke={2} />
-                </span>
-              </div>
-            </Link>
           </Group>
-
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
             hiddenFrom="sm"
           />
+          <Group>{renderAuthButtons()}</Group>
+          <Link href="/cart">
+            <div className={classes.cart}>
+              {products?.products?.length != 0 && (
+                <span className={classes.cartQuantity}>
+                  {products?.products?.length}
+                </span>
+              )}
+              <span>
+                <IconShoppingCart stroke={2} />
+              </span>
+            </div>
+          </Link>
         </Group>
       </header>
-
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
@@ -275,7 +279,6 @@ export function HeaderMegaMenu() {
             ]}
             visibleFrom="xs"
           />
-
           <a href="#" className={classes.link}>
             Home
           </a>
@@ -297,9 +300,7 @@ export function HeaderMegaMenu() {
           <a href="#" className={classes.link}>
             Academy
           </a>
-
           <Divider my="sm" />
-
           <Group justify="center" grow pb="xl" px="md">
             {renderAuthButtons()}
           </Group>

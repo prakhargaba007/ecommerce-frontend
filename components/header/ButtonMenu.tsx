@@ -1,4 +1,4 @@
-import { Button, Menu, Text, rem, useMantineTheme } from "@mantine/core";
+import { Button, Menu, rem, useMantineTheme } from "@mantine/core";
 import {
   IconPackage,
   IconUserCircle,
@@ -9,10 +9,12 @@ import Link from "next/link";
 
 type ButtonMenuProps = {
   logOut: () => void;
+  name: string | undefined;
 };
 
-export function ButtonMenu({ logOut }: ButtonMenuProps) {
+export function ButtonMenu({ logOut, name }: ButtonMenuProps) {
   const theme = useMantineTheme();
+  const buttonLabel = typeof name === "string" ? name[0] : "";
 
   return (
     <Menu
@@ -22,7 +24,7 @@ export function ButtonMenu({ logOut }: ButtonMenuProps) {
       withinPortal
     >
       <Menu.Target>
-        <Button>P</Button>
+        <Button>{buttonLabel}</Button>
       </Menu.Target>
       <Menu.Dropdown>
         <Link href="/user/orders" passHref>

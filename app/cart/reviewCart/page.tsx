@@ -5,6 +5,9 @@ import { IconCheck, IconX } from "@tabler/icons-react";
 import toast, { Toaster } from "react-hot-toast";
 import classes from "./page.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCart, selectCartProducts } from "@/redux/slices/cartSlice";
+import { AppDispatch } from "@/redux/store";
 
 declare global {
   interface Window {
@@ -33,23 +36,12 @@ type Address = {
   isDefault: boolean;
 };
 
-type CartItem = {
-  product: Product;
-  quantity: number;
-};
-
-type Cart = {
-  products: CartItem[];
-  totalPrice: number;
-};
-
 type NotificationState = {
   message: string;
   color: "red" | "green";
 };
 
 const ConfirmationPageContent: React.FC = () => {
-  const [cart, setCart] = useState<Cart | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
   const [notification, setNotification] = useState<NotificationState | null>(
     null
@@ -59,39 +51,20 @@ const ConfirmationPageContent: React.FC = () => {
   const addressId = searchParams.get("address");
 
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const cart = useSelector(selectCartProducts);
+  console.log(cart);
 
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/cart",
-          {
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          }
-        );
-        const data = await response.json();
-        setCart(data);
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-        setNotification({
-          message: "Error fetching cart data",
-          color: "red",
-        });
-        setTimeout(() => {
-          setNotification(null);
-        }, 1500);
-      }
-    };
+    dispatch(fetchCart());
 
     const fetchAddress = async () => {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/address/" + addressId,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/address/${addressId}`,
           {
             headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
@@ -112,8 +85,7 @@ const ConfirmationPageContent: React.FC = () => {
     if (addressId) {
       fetchAddress();
     }
-    fetchCart();
-  }, [addressId]);
+  }, [addressId, dispatch]);
 
   const handlePlaceOrder = async () => {
     if (!cart) return;
@@ -124,8 +96,8 @@ const ConfirmationPageContent: React.FC = () => {
         {
           method: "POST",
           headers: {
-            "content-type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             amount: cart.totalPrice,
@@ -141,6 +113,9 @@ const ConfirmationPageContent: React.FC = () => {
   };
 
   const handlePaymentVerify = async (data: any) => {
+    let token = localStorage.getItem("token");
+    console.log(token);
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: data.amount,
@@ -155,25 +130,29 @@ const ConfirmationPageContent: React.FC = () => {
             {
               method: "POST",
               headers: {
-                "content-type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                "Content-Type": "application/json",
+                // Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                address,
+                token: token,
               }),
             }
           );
 
           const verifyData = await res.json();
 
-          if (verifyData.message) {
+          if (verifyData.staus == 201) {
             toast.success(verifyData.message);
+            await confirmOrder(verifyData.payment._id);
+            // router.push(`/user/success?oi=${data.order._id}`);
           }
 
           // Call the function to confirm the order
-          await confirmOrder(verifyData.payment._id);
         } catch (error) {
           console.log(error);
         }
@@ -196,7 +175,7 @@ const ConfirmationPageContent: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             shippingAddressId: address._id,
@@ -222,7 +201,7 @@ const ConfirmationPageContent: React.FC = () => {
   }
 
   const totalPrice = cart.products?.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (acc: any, item: any) => acc + item.product.price * item.quantity,
     0
   );
 
@@ -240,7 +219,7 @@ const ConfirmationPageContent: React.FC = () => {
         </Notification>
       )}
       <div className={classes.cartItems}>
-        {cart.products?.map((item) => (
+        {cart.products?.map((item: any) => (
           <div key={item.product._id} className={classes.cartItem}>
             <Text className={classes.productName}>{item.product.name}</Text>
             <Text className={classes.productPrice}>₹{item.product.price}</Text>
