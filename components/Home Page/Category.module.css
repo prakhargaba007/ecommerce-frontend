@@ -1,77 +1,94 @@
 .category {
-  margin-bottom: 40px;
+  margin-bottom: 1.5rem;
 }
 
 .title {
-  margin: 0 0 20px 15px;
-  font-size: 28px;
+  margin: 0 0 1.25rem 0;
+  font-size: 1.35rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
-.carousel {
-  padding-left: 15px;
+.cardLink {
+  text-decoration: none;
+  display: block;
 }
 
-.slideBox {
+.card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
-.slideBox:hover {
-  transform: translateY(-5px);
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+  border-color: rgba(245,158,11,0.2);
 }
 
-.imageCircle {
-  width: 150px;
-  height: 150px;
+.imageWrapper {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: #f0f0ee;
   border: 3px solid #fff;
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: all 0.35s ease;
 }
 
-.slideBox:hover .imageCircle {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+.card:hover .imageWrapper {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  transform: scale(1.03);
 }
 
-.categoryName {
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #c084fc, #818cf8);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.itemName {
   text-align: center;
-  margin-top: 12px;
-  font-size: 16px;
+  font-size: 0.9375rem;
   font-weight: 500;
-  color: #444;
+  color: var(--text-primary);
   transition: color 0.3s ease;
 }
 
-.slideBox:hover .categoryName {
-  color: #007bff;
+.card:hover .itemName {
+  color: #f59e0b;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .title {
-    font-size: 24px;
-    margin-left: 10px;
+  .imageWrapper {
+    width: 100px;
+    height: 100px;
   }
-
-  .carousel {
-    padding-left: 10px;
-  }
-
-  .imageCircle {
-    width: 120px;
-    height: 120px;
-  }
-
-  .categoryName {
-    font-size: 14px;
+  .itemName {
+    font-size: 0.85rem;
   }
 }
