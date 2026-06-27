@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { CardsCarousel } from "@/components/Home Page/CardsCarousel";
 import Category from "@/components/Home Page/Category";
-import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
-import { Button, TextInput } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { IconTruckDelivery, IconRefresh, IconShieldLock, IconHeadset, IconArrowRight, IconStarFilled } from "@tabler/icons-react";
 import "./page.css";
 
@@ -57,8 +56,6 @@ export default function Home() {
 
   return (
     <>
-      <HeaderMegaMenu />
-
       {/* ===== HERO SECTION ===== */}
       <section className="hero-section">
         <div className="hero-grid">
